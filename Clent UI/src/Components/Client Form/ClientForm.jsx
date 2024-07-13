@@ -1,7 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import "./ClientForm.css";
+import axios from 'axios';
+import ThankYou from "./ThankYou";
+
 
 const ClientForm = () => {
+  const [company,setCompany] = useState('');
+  const [name,setName] = useState('');
+  const [email,setEmail] = useState('');
+  const [number,setNumber] = useState(0);
+  const [time,setTime] = useState('');
+  const [project,setProject] = useState('');
+  const [description,setDescription] = useState('');
+  const [flag,setFlag] = useState(false);
+  
+  
+  const handleSubmit = (event) =>{
+    event.preventDefault();
+    const apiUrl = "http://localhost:3001/data";
+    const CompanyName = company;
+    const Name = name;
+    const Email = email;
+    const Mobile = number;
+    const Time = time;
+    const ProjectName = project;
+    const Description = description;
+
+
+    axios.post("http://localhost:3001/data",{CompanyName,Name,Email,Mobile,Time,ProjectName,Description})
+      .then(response => {
+        // Update the employees state with the data from the API response
+        console.log(response)
+        if(response.statusText=='Created'){
+          setFlag(true)
+        }
+       
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
+  }
   return (
     <div className="container mt-3 pt-2 mb-3" id="clientform">
       <div className="justify-content-center">
@@ -25,6 +63,7 @@ const ClientForm = () => {
                 aria-label="company name"
                 id="input"
                 required
+                onChange={(e)=>setCompany(e.target.value)}
               />
             </div>
 
@@ -39,6 +78,7 @@ const ClientForm = () => {
                 aria-label="name"
                 id="input"
                 required
+                onChange={(e)=>setName(e.target.value)}
               />
             </div>
 
@@ -53,6 +93,7 @@ const ClientForm = () => {
                 aria-label="email"
                 id="input"
                 required
+                onChange={(e)=>setEmail(e.target.value)}
               />
             </div>
 
@@ -67,6 +108,7 @@ const ClientForm = () => {
                 aria-label="mobile"
                 id="input"
                 required
+                onChange={(e)=>setNumber(e.target.value)}
               />
             </div>
 
@@ -81,6 +123,7 @@ const ClientForm = () => {
                 aria-label="timeline"
                 id="input"
                 required
+                onChange={(e)=>setTime(e.target.value)}
               />
             </div>
 
@@ -95,6 +138,7 @@ const ClientForm = () => {
                 aria-label="project name"
                 id="input"
                 required
+                onChange={(e)=>setProject(e.target.value)}
               />
             </div>
 
@@ -110,6 +154,7 @@ const ClientForm = () => {
                 id="textarea"
                 rows="3"
                 required
+                onChange={(e)=>setDescription(e.target.value)}
               />
             </div>
 
@@ -118,21 +163,31 @@ const ClientForm = () => {
                 Budget *
               </label>
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 placeholder="₹ 8,000.00"
                 aria-label="budget"
                 id="budgetinput"
-                disabled
+                required
+               
               />
             </div>
 
-            <button type="submit" className="button mt-5 mb-4 w-100">
+            <button type="submit" className="button mt-5 mb-4 w-100" onClick={handleSubmit}>
               Submit
             </button>
           </form>
         </div>
       </div>
+
+    {
+      flag?
+      <div style={{backgroundColor:'white',position:'absolute',top:0,left:0,width:'100%',height:'100%',marginTop:-18,paddingTop:'40%'}}>
+          <ThankYou/>
+      </div>:
+      <div></div>
+    }
+      
     </div>
   );
 };
