@@ -1,45 +1,101 @@
 import React, { useState } from "react";
 import "./ClientForm.css";
-import axios from 'axios';
+import axios from "axios";
 import ThankYou from "./ThankYou";
 
-
 const ClientForm = () => {
-  const [company,setCompany] = useState('');
-  const [name,setName] = useState('');
-  const [email,setEmail] = useState('');
-  const [number,setNumber] = useState(0);
-  const [time,setTime] = useState('');
-  const [project,setProject] = useState('');
-  const [description,setDescription] = useState('');
-  const [flag,setFlag] = useState(false);
-  
-  
-  const handleSubmit = (event) =>{
-    event.preventDefault();
-    const apiUrl = "http://localhost:3001/data";
-    const CompanyName = company;
-    const Name = name;
-    const Email = email;
-    const Mobile = number;
-    const Time = time;
-    const ProjectName = project;
-    const Description = description;
+  const [company, setCompany] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [number, setNumber] = useState(0);
+  const [time, setTime] = useState("");
+  const [project, setProject] = useState("");
+  const [description, setDescription] = useState("");
+  const [flag, setFlag] = useState(false);
 
+  const [errors, setErrors] = useState({});
+  const [emailError, setEmailError] = useState("");
+  const [numberError, setNumberError] = useState("");
 
-    axios.post("http://localhost:3001/data",{CompanyName,Name,Email,Mobile,Time,ProjectName,Description})
-      .then(response => {
-        // Update the employees state with the data from the API response
-        console.log(response)
-        if(response.statusText=='Created'){
-          setFlag(true)
-        }
-       
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
+  // email validation function
+  function emailValid(email) {
+    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+
+    return regex.test(email);
   }
+
+  // mobile number validation function
+  function numberValid(number) {
+    var regex = /^\d{10}$/;
+    return regex.test(number);
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    let formErrors = {};
+
+    // Check if fields are empty
+    if (!company) formErrors.company = "Company is required";
+    if (!name) formErrors.name = "Name is required";
+    if (!time) formErrors.time = "Time is required";
+    if (!project) formErrors.project = "Project is required";
+    if (!description) formErrors.description = "Description is required";
+
+    // email validation
+    let isEmailValid = emailValid(email);
+    if (!email) {
+      setEmailError("Email is required");
+    } else if (isEmailValid) {
+      setEmailError(" ");
+    } else {
+      setEmailError("Enter a Valid Email");
+    }
+
+    // mobile number validation
+    let isNumberValid = numberValid(number);
+    if (!number) {
+      setNumberError("Mobile Number is required");
+    } else if (isNumberValid) {
+      setNumberError("");
+    } else {
+      setNumberError("Enter a Valid Mobile Number");
+    }
+
+    setErrors(formErrors);
+
+    if (Object.keys(formErrors).length === 0) {
+      //const apiUrl = "http://localhost:3001/data";
+      const CompanyName = company;
+      const Name = name;
+      const Email = email;
+      const Mobile = number;
+      const Time = time;
+      const ProjectName = project;
+      const Description = description;
+
+      axios
+        .post("http://localhost:3001/data", {
+          CompanyName,
+          Name,
+          Email,
+          Mobile,
+          Time,
+          ProjectName,
+          Description,
+        })
+        .then((response) => {
+          // Update the employees state with the data from the API response
+          console.log(response);
+          if (response.statusText === "Created") {
+            setFlag(true);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    }
+  };
   return (
     <div className="container mt-3 pt-2 mb-3" id="clientform">
       <div className="justify-content-center">
@@ -53,7 +109,11 @@ const ClientForm = () => {
         <div>
           <form className="mt-2 mb-2 pt-2 w-75">
             <div className="pt-2">
-              <label for="company name" class="form-label" id="formLabel">
+              <label
+                htmlFor="company name"
+                className="form-label"
+                id="formLabel"
+              >
                 Company Name *
               </label>
               <input
@@ -63,12 +123,13 @@ const ClientForm = () => {
                 aria-label="company name"
                 id="input"
                 required
-                onChange={(e)=>setCompany(e.target.value)}
+                onChange={(e) => setCompany(e.target.value)}
               />
             </div>
+            <div className="text-danger">{errors.company}</div>
 
             <div className="pt-3">
-              <label for="Name" class="form-label" id="formLabel">
+              <label htmlFor="Name" className="form-label" id="formLabel">
                 Name *
               </label>
               <input
@@ -78,12 +139,13 @@ const ClientForm = () => {
                 aria-label="name"
                 id="input"
                 required
-                onChange={(e)=>setName(e.target.value)}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
+            <div className="text-danger">{errors.name}</div>
 
             <div className="pt-3">
-              <label for="email" class="form-label" id="formLabel">
+              <label htmlFor="email" className="form-label" id="formLabel">
                 Email address *
               </label>
               <input
@@ -93,12 +155,13 @@ const ClientForm = () => {
                 aria-label="email"
                 id="input"
                 required
-                onChange={(e)=>setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+            <div className="text-danger">{emailError}</div>
 
             <div className="pt-3">
-              <label for="mobile" class="form-label" id="formLabel">
+              <label htmlFor="mobile" className="form-label" id="formLabel">
                 Mobile Number *
               </label>
               <input
@@ -108,12 +171,13 @@ const ClientForm = () => {
                 aria-label="mobile"
                 id="input"
                 required
-                onChange={(e)=>setNumber(e.target.value)}
+                onChange={(e) => setNumber(e.target.value)}
               />
             </div>
+            <div className="text-danger">{numberError}</div>
 
             <div className="pt-3">
-              <label for="timeline" class="form-label" id="formLabel">
+              <label htmlFor="timeline" className="form-label" id="formLabel">
                 Estimated Timeline *
               </label>
               <input
@@ -123,12 +187,17 @@ const ClientForm = () => {
                 aria-label="timeline"
                 id="input"
                 required
-                onChange={(e)=>setTime(e.target.value)}
+                onChange={(e) => setTime(e.target.value)}
               />
             </div>
+            <div className="text-danger">{errors.time}</div>
 
             <div className="pt-3">
-              <label for="project name" class="form-label" id="formLabel">
+              <label
+                htmlFor="project name"
+                className="form-label"
+                id="formLabel"
+              >
                 Project Name *
               </label>
               <input
@@ -138,12 +207,17 @@ const ClientForm = () => {
                 aria-label="project name"
                 id="input"
                 required
-                onChange={(e)=>setProject(e.target.value)}
+                onChange={(e) => setProject(e.target.value)}
               />
             </div>
+            <div className="text-danger">{errors.project}</div>
 
             <div className="pt-3">
-              <label for="description" class="form-label" id="formLabel">
+              <label
+                htmlFor="description"
+                className="form-label"
+                id="formLabel"
+              >
                 Project Description *
               </label>
               <textarea
@@ -154,40 +228,54 @@ const ClientForm = () => {
                 id="textarea"
                 rows="3"
                 required
-                onChange={(e)=>setDescription(e.target.value)}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </div>
+            <div className="text-danger">{errors.description}</div>
 
             <div className="pt-3">
-              <label for="budget" class="form-label" id="formLabel">
+              <label htmlFor="budget" className="form-label" id="formLabel">
                 Budget *
               </label>
               <input
-                type="number"
-                class="form-control"
+                type="text"
+                className="form-control"
                 placeholder="₹ 8,000.00"
                 aria-label="budget"
                 id="budgetinput"
-                required
-               
+                disabled
               />
             </div>
 
-            <button type="submit" className="button mt-5 mb-4 w-100" onClick={handleSubmit}>
+            <button
+              type="submit"
+              className="button mt-5 mb-4 w-100"
+              onClick={handleSubmit}
+            >
               Submit
             </button>
           </form>
         </div>
       </div>
 
-    {
-      flag?
-      <div style={{backgroundColor:'white',position:'absolute',top:0,left:0,width:'100%',height:'100%',marginTop:-18,paddingTop:'40%'}}>
-          <ThankYou/>
-      </div>:
-      <div></div>
-    }
-      
+      {flag ? (
+        <div
+          style={{
+            backgroundColor: "white",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            marginTop: -18,
+            paddingTop: "40%",
+          }}
+        >
+          <ThankYou />
+        </div>
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 };
