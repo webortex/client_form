@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import "./ClientForm.css";
 import axios from "axios";
-import ThankYou from "./ThankYou";
+import tick from "../Client Form/tick.gif";
+import tc from "./t&c.pdf";
 
 const ClientForm = () => {
   const [company, setCompany] = useState("");
@@ -12,6 +13,10 @@ const ClientForm = () => {
   const [project, setProject] = useState("");
   const [description, setDescription] = useState("");
   const [flag, setFlag] = useState(false);
+
+  // const handleflag = () => {
+  //   setFlag(false);
+  // };
 
   const [errors, setErrors] = useState({});
   const [emailError, setEmailError] = useState("");
@@ -64,7 +69,7 @@ const ClientForm = () => {
 
     setErrors(formErrors);
 
-    if (Object.keys(formErrors).length === 0) {
+    if (Object.keys(formErrors).length === 0 && isEmailValid && isNumberValid) {
       //const apiUrl = "http://localhost:3001/data";
       const CompanyName = company;
       const Name = name;
@@ -86,13 +91,13 @@ const ClientForm = () => {
         })
         .then((response) => {
           // Update the employees state with the data from the API response
-          console.log(response);
-          if (response.statusText === "Created") {
+          // console.log(response)
+          if (response.statusText == "Created") {
             setFlag(true);
           }
         })
         .catch((error) => {
-          console.error("Error fetching data:", error);
+          console.error("Error in posting data:", error);
         });
     }
   };
@@ -239,12 +244,29 @@ const ClientForm = () => {
               </label>
               <input
                 type="text"
-                className="form-control"
+                className="formControl"
                 placeholder="₹ 8,000.00"
                 aria-label="budget"
                 id="budgetinput"
                 disabled
               />
+            </div>
+
+            <div className="form-check pt-3">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                value=""
+                aria-label="flexCheck"
+                id="input"
+                checked
+              />
+              <label className="form-check-label" htmlFor="flexCheck">
+                I agree to all{" "}
+                <a href={tc} id="tc" download="t&c.pdf">
+                  Terms & Conditions.
+                </a>
+              </label>
             </div>
 
             <button
@@ -261,17 +283,62 @@ const ClientForm = () => {
       {flag ? (
         <div
           style={{
-            backgroundColor: "white",
-            position: "absolute",
-            top: 0,
-            left: 0,
+            backgroundColor: "#202227",
+            position: "fixed",
+            top: "0%",
+            left: "0%",
             width: "100%",
             height: "100%",
-            marginTop: -18,
-            paddingTop: "40%",
           }}
         >
-          <ThankYou />
+          <div
+            style={{
+              position: "fixed",
+              top: "25%",
+              left: "38%",
+              width: "25%",
+              borderRadius: 10,
+              paddingBottom: "2%",
+            }}
+          >
+            <p
+              style={{
+                fontWeight: "bold",
+                fontSize: 20,
+                textAlign: "center",
+                color: "white",
+              }}
+            >
+              Form Submitted Successfully🚀
+            </p>
+            <p style={{ fontSize: 12, textAlign: "center" }}>
+              The form has been submitted to the upper officers and is currently
+              under review
+            </p>
+            <img
+              src={tick}
+              width={"50%"}
+              height={"80%"}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginLeft: "23%",
+              }}
+            />
+            {/* <button
+              style={{
+                width: "80%",
+                marginLeft: "10%",
+                backgroundColor: "#5871eb",
+                color: "white",
+                height: "30px",
+                borderRadius: 5,
+              }}
+              onClick={handleflag}
+            >
+              OKAY!!
+            </button> */}
+          </div>
         </div>
       ) : (
         <div></div>

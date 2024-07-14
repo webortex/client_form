@@ -43,6 +43,16 @@ input::placeholder {
   border-radius: 0.5rem;
 }
 
+.form-check-input {
+  font: var(--poppins-font);
+  box-shadow: none !important;
+}
+
+#tc {
+  color: #ffffffbe;
+  text-decoration: none;
+}
+
 .formHeadTitle {
   font: var(--poppins-font);
   font-weight: 600;
